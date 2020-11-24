@@ -14,11 +14,11 @@ import axios from "axios";
 const { Option } = Select;
 
 const FormItem = () => {
-    useEffect(() => {
-        results ? setResults(results) : "";
-    }, [results]);
-
     const [results, setResults] = useState([]);
+
+    const onFinishFailed = errorInfo => {
+        console.log("Failed:", errorInfo);
+    };
 
     const handleResult = e => {
         // stop browser's default behaviour of reloading on form submit
@@ -34,16 +34,15 @@ const FormItem = () => {
                 console.log(error);
             });
     };
-    const addTransaction = e => {
-        e.preventDefault();
+    const addTransaction = data => {
         axios({
             method: "post",
             url: "/api/transactions",
             data: {
-                amount: 100,
-                tag: "test",
+                amount: data.amount,
+                tag: data.tag,
                 expense: true,
-                currency: "currency"
+                currency: data.currency
             }
         })
             .then(response => {
@@ -56,9 +55,10 @@ const FormItem = () => {
     return (
         <>
             <Form
-                id="formitem"
                 name="basic"
                 initialValues={{ remember: true }}
+                onFinish={addTransaction}
+                onFinishFailed={onFinishFailed}
                 layout="vertical"
             >
                 <Form.Item
@@ -108,7 +108,6 @@ const FormItem = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
-                        onClick={addTransaction}
                         // onClick={handleResult}
                         id="post"
                     >
