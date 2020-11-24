@@ -1,30 +1,55 @@
-import React from "react";
-import { Select, Form, Input, Button, DatePicker, Space, Divider } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+    Select,
+    Form,
+    Input,
+    Button,
+    DatePicker,
+    Space,
+    Divider,
+    Table
+} from "antd";
+import axios from "axios";
 
 const { Option } = Select;
-const axios = require("axios").default;
 
 const FormItem = () => {
-    const handleSubmit = e => {
+    useEffect(() => {
+        results ? setResults(results) : "";
+    }, [results]);
+
+    const [results, setResults] = useState([]);
+
+    const handleResult = e => {
         // stop browser's default behaviour of reloading on form submit
         e.preventDefault();
-        const headers = {
-            Authorization: "Bearer my-token",
-            "Content-Type": "text/plain;charset=utf-8"
-        };
+
         axios
-            .post(
-                "/api/transactions",
-                {
-                    amount: e.target.value,
-                    tag: "beauty"
-                },
-                { headers }
-            )
-            .then(function(response) {
+            .get("/api/transactions")
+            .then(response => {
+                console.log(response);
+                setResults(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
+    const addTransaction = e => {
+        e.preventDefault();
+        axios({
+            method: "post",
+            url: "/api/transactions",
+            data: {
+                amount: 100,
+                tag: "test",
+                expense: true,
+                currency: "currency"
+            }
+        })
+            .then(response => {
                 console.log(response);
             })
-            .catch(function(error) {
+            .catch(error => {
                 console.log(error);
             });
     };
@@ -38,6 +63,7 @@ const FormItem = () => {
             >
                 <Form.Item
                     label="Amount"
+                    name="amount"
                     rules={[
                         {
                             required: true,
@@ -45,21 +71,12 @@ const FormItem = () => {
                         }
                     ]}
                 >
-                    <Input style={{ width: "250px" }} />
-                    <Select
-                        defaultValue="GBP"
-                        style={{
-                            width: "80px"
-                        }}
-                    >
-                        <Option value="gbp">GBP</Option>
-                        <Option value="usd">USD</Option>
-                        <Option value="euro">EURO</Option>
-                    </Select>
+                    <Input />
                 </Form.Item>
 
                 <Form.Item
-                    label="tag"
+                    label="Currency"
+                    name="currency"
                     rules={[
                         {
                             required: true,
@@ -67,20 +84,23 @@ const FormItem = () => {
                         }
                     ]}
                 >
-                    <Select
-                        defaultValue="Please pick a category"
-                        style={{ width: "200px" }}
-                    >
+                    <Select>
+                        <Option value="gbp">GBP</Option>
+                        <Option value="usd">USD</Option>
+                        <Option value="euro">EURO</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item label="Tag" name="tag">
+                    <Select>
                         <Option value="beauty">Beauty</Option>
                         <Option value="shopping">Shopping</Option>
                     </Select>
+                </Form.Item>
+
+                <Form.Item label="Date" name="date">
                     <Space direction="vertical">
-                        <DatePicker
-                            style={{
-                                width: "110px",
-                                marginLeft: "15px"
-                            }}
-                        />
+                        <DatePicker />
                     </Space>
                 </Form.Item>
 
@@ -88,13 +108,57 @@ const FormItem = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
-                        onClick={handleSubmit}
+                        onClick={addTransaction}
+                        // onClick={handleResult}
                         id="post"
                     >
                         Add Expense
                     </Button>
                 </Form.Item>
+
                 <Divider />
+                <h3>Results</h3>
+                <div>
+                    {results.map(result => {
+                        const dataSource = [
+                            {
+                                amount: result.amount,
+                                tag: result.tag,
+                                date: result.created_at
+                            }
+                        ];
+                        const columns = [
+                            {
+                                title: "Amount",
+                                dataIndex: "amount",
+                                key: "amount"
+                            },
+                            {
+                                title: "Category",
+                                dataIndex: "tag",
+                                key: "tag"
+                            },
+                            {
+                                title: "Date",
+                                dataIndex: "date",
+                                key: "date"
+                            },
+                            {
+                                title: "Action",
+                                dataIndex: "action",
+                                key: "action"
+                            }
+                        ];
+                        return (
+                            <Table
+                                key={result.id}
+                                dataSource={dataSource}
+                                columns={columns}
+                                size="middle"
+                            />
+                        );
+                    })}
+                </div>
             </Form>
         </>
     );

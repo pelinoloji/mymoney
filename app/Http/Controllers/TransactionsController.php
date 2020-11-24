@@ -13,25 +13,17 @@ class TransactionsController extends Controller
     return response()->json($transaction);
   }
 
-  public function store()
+  public function store(Request $request)
   {
-    // $this->validateTransaction();
+    $transaction = new Transaction();
 
-    // $transaction = new Transaction(request(['amount', 'tag']));
-    // $transaction->save();
-    // return response()->json($transaction);
+    $transaction->amount = $request->get('amount');
+    $transaction->tag = $request->get('tag');
+    $transaction->currency = $request->get('currency');
+    $transaction->expense = $request->get('expense');
+
+    $transaction->save();
+
+    return redirect('/');;
   }
-
-  public function create()
-  {
-    //
-  }
-
-  // public function validateTransaction()
-  // {
-  //   return request()->validate([
-  //     'amount' => 'required',
-  //     'tag' => 'required',
-  //   ]);
-  // }
 }
