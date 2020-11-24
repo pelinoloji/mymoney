@@ -2,8 +2,32 @@ import React from "react";
 import { Select, Form, Input, Button, DatePicker, Space, Divider } from "antd";
 
 const { Option } = Select;
+const axios = require("axios").default;
 
 const FormItem = () => {
+    const handleSubmit = e => {
+        // stop browser's default behaviour of reloading on form submit
+        e.preventDefault();
+        const headers = {
+            Authorization: "Bearer my-token",
+            "Content-Type": "text/plain;charset=utf-8"
+        };
+        axios
+            .post(
+                "/api/transactions",
+                {
+                    amount: e.target.value,
+                    tag: "beauty"
+                },
+                { headers }
+            )
+            .then(function(response) {
+                console.log(response);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    };
     return (
         <>
             <Form
@@ -14,7 +38,6 @@ const FormItem = () => {
             >
                 <Form.Item
                     label="Amount"
-                    name="amount"
                     rules={[
                         {
                             required: true,
@@ -36,8 +59,7 @@ const FormItem = () => {
                 </Form.Item>
 
                 <Form.Item
-                    label="Category"
-                    name="category"
+                    label="tag"
                     rules={[
                         {
                             required: true,
@@ -63,7 +85,12 @@ const FormItem = () => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        onClick={handleSubmit}
+                        id="post"
+                    >
                         Add Expense
                     </Button>
                 </Form.Item>

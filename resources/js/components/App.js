@@ -1,34 +1,18 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { Tabs, Col, Row } from "antd";
+import { HashRouter, Route, Switch } from "react-router-dom";
 
 import FormItem from "./FormItem";
-
-const { TabPane } = Tabs;
+import Main from "./Main";
 
 const App = () => {
     return (
-        <>
-            <Row style={{ margin: "40px" }}>
-                <Col span={5}>
-                    <Tabs defaultActiveKey="1">
-                        <TabPane tab="Expenses" key="1">
-                            <FormItem />
-                        </TabPane>
-
-                        <TabPane tab="Income" key="2">
-                            <FormItem />
-                        </TabPane>
-                    </Tabs>
-                </Col>
-            </Row>
-        </>
+        <HashRouter>
+            <Switch>
+                <Route path="/" component={Main} />
+                <Route path="/transactions" component={FormItem} />
+            </Switch>
+        </HashRouter>
     );
 };
 
 export default App;
-
-// DOM element
-if (document.getElementById("root")) {
-    ReactDOM.hydrate(<App />, document.getElementById("root"));
-}

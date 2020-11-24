@@ -3,24 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transactions;
+use App\Models\Transaction;
 
-class TransactionsController extends Controller
+class TransactionController extends Controller
 {
-  public function index(Transactions $transactions)
+  public function index(Transaction $transaction)
   {
-    $transactions = Transactions::all();
-    return response()->json($transactions);
+    $transaction = Transaction::all();
+    return response()->json($transaction);
   }
 
-  public function show(Transactions $transactions)
+  public function show(Transaction $transaction)
   {
-    return $transactions;
+    return $transaction;
   }
 
   public function store()
   {
-    //
+    $this->validateTransaction();
+
+    $transaction = new Transaction(request(['amount', 'tag']));
+    $transaction->save();
+    return redirect(route('transactions.index'));
   }
 
   public function create()
@@ -31,10 +35,8 @@ class TransactionsController extends Controller
   public function validateTransaction()
   {
     return request()->validate([
-      'title' => 'required',
-      'excerpt' => 'required',
-      'body' => 'required',
-
+      'amount' => 'required',
+      'tag' => 'required',
     ]);
   }
 }
