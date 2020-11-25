@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
     Select,
     Form,
@@ -32,7 +33,13 @@ const columns = [
     {
         title: "Action",
         dataIndex: "action",
-        key: "action"
+        key: "action",
+        render: (text, record) => (
+            <Space size="middle">
+                <Link to="/transactions/">Edit {record.name}</Link>
+                <Link>Delete</Link>
+            </Space>
+        )
     }
 ];
 
@@ -83,6 +90,15 @@ const FormItem = () => {
             handleResult();
         }, []);
 
+        const config = {
+            rules: [
+                {
+                    type: "object",
+                    required: true,
+                    message: "Please select time!"
+                }
+            ]
+        };
         return (
             <>
                 <Form
@@ -129,7 +145,7 @@ const FormItem = () => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item label="Date" name="date">
+                    <Form.Item label="Date" name="date" {...config}>
                         <Space direction="vertical">
                             <DatePicker onChange={e => console.log(e)} />
                         </Space>
