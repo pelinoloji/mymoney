@@ -13,154 +13,152 @@ import axios from "axios";
 
 const { Option } = Select;
 
+const columns = [
+    {
+        title: "Amount",
+        dataIndex: "amount",
+        key: "amount"
+    },
+    {
+        title: "Category",
+        dataIndex: "tag",
+        key: "tag"
+    },
+    {
+        title: "Date",
+        dataIndex: "date",
+        key: "date"
+    },
+    {
+        title: "Action",
+        dataIndex: "action",
+        key: "action"
+    }
+];
+
 const FormItem = () => {
-    const [results, setResults] = useState([]);
+    try {
+        const [results, setResults] = useState([]);
 
-    const onFinishFailed = errorInfo => {
-        console.log("Failed:", errorInfo);
-    };
+        const onFinishFailed = errorInfo => {
+            console.log("Failed:", errorInfo);
+        };
+        const onChange = (date, dateString) => {
+            console.log(date, dateString);
+        };
+        const handleResult = () => {
+            axios
+                .get("/api/transactions")
+                .then(response => {
+                    console.log(response);
+                    setResults(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        };
 
-    const handleResult = e => {
-        // stop browser's default behaviour of reloading on form submit
-        e.preventDefault();
-
-        axios
-            .get("/api/transactions")
-            .then(response => {
-                console.log(response);
-                setResults(response.data);
+        const addTransaction = data => {
+            axios({
+                method: "post",
+                url: "/api/transactions",
+                data: {
+                    amount: data.amount,
+                    tag: data.tag,
+                    expense: true,
+                    currency: data.currency,
+                    date: data.date
+                }
             })
-            .catch(error => {
-                console.log(error);
-            });
-    };
-    const addTransaction = data => {
-        axios({
-            method: "post",
-            url: "/api/transactions",
-            data: {
-                amount: data.amount,
-                tag: data.tag,
-                expense: true,
-                currency: data.currency
-            }
-        })
-            .then(response => {
-                console.log(response);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    };
-    return (
-        <>
-            <Form
-                name="basic"
-                initialValues={{ remember: true }}
-                onFinish={addTransaction}
-                onFinishFailed={onFinishFailed}
-                layout="vertical"
-            >
-                <Form.Item
-                    label="Amount"
-                    name="amount"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input an amount!"
-                        }
-                    ]}
+                .then(response => {
+                    handleResult();
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        };
+
+        useEffect(() => {
+            handleResult();
+        }, []);
+
+        return (
+            <>
+                <Form
+                    name="basic"
+                    initialValues={{ remember: true }}
+                    onFinish={addTransaction}
+                    onFinishFailed={onFinishFailed}
+                    layout="vertical"
                 >
-                    <Input />
-                </Form.Item>
-
-                <Form.Item
-                    label="Currency"
-                    name="currency"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please pick a category!"
-                        }
-                    ]}
-                >
-                    <Select>
-                        <Option value="gbp">GBP</Option>
-                        <Option value="usd">USD</Option>
-                        <Option value="euro">EURO</Option>
-                    </Select>
-                </Form.Item>
-
-                <Form.Item label="Tag" name="tag">
-                    <Select>
-                        <Option value="beauty">Beauty</Option>
-                        <Option value="shopping">Shopping</Option>
-                    </Select>
-                </Form.Item>
-
-                <Form.Item label="Date" name="date">
-                    <Space direction="vertical">
-                        <DatePicker />
-                    </Space>
-                </Form.Item>
-
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        // onClick={handleResult}
-                        id="post"
+                    <Form.Item
+                        label="Amount"
+                        name="amount"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input an amount!"
+                            }
+                        ]}
                     >
-                        Add Expense
-                    </Button>
-                </Form.Item>
+                        <Input />
+                    </Form.Item>
 
-                <Divider />
-                <h3>Results</h3>
-                <div>
-                    {results.map(result => {
-                        const dataSource = [
+                    <Form.Item
+                        label="Currency"
+                        name="currency"
+                        rules={[
                             {
-                                amount: result.amount,
-                                tag: result.tag,
-                                date: result.created_at
+                                required: true,
+                                message: "Please pick a category!"
                             }
-                        ];
-                        const columns = [
-                            {
-                                title: "Amount",
-                                dataIndex: "amount",
-                                key: "amount"
-                            },
-                            {
-                                title: "Category",
-                                dataIndex: "tag",
-                                key: "tag"
-                            },
-                            {
-                                title: "Date",
-                                dataIndex: "date",
-                                key: "date"
-                            },
-                            {
-                                title: "Action",
-                                dataIndex: "action",
-                                key: "action"
-                            }
-                        ];
-                        return (
+                        ]}
+                    >
+                        <Select>
+                            <Option value="gbp">GBP</Option>
+                            <Option value="usd">USD</Option>
+                            <Option value="euro">EURO</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item label="Tag" name="tag">
+                        <Select>
+                            <Option value="beauty">Beauty</Option>
+                            <Option value="shopping">Shopping</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item label="Date" name="date">
+                        <Space direction="vertical">
+                            <DatePicker onChange={e => console.log(e)} />
+                        </Space>
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" id="post">
+                            Add Expense
+                        </Button>
+                    </Form.Item>
+
+                    <Divider />
+                    <h3>Results</h3>
+                    <div>
+                        {!!results?.length ? (
                             <Table
-                                key={result.id}
-                                dataSource={dataSource}
+                                key={results.id}
+                                dataSource={results}
                                 columns={columns}
                                 size="middle"
                             />
-                        );
-                    })}
-                </div>
-            </Form>
-        </>
-    );
+                        ) : null}
+                    </div>
+                </Form>
+            </>
+        );
+    } catch (err) {
+        console.log(err, "render");
+        return null;
+    }
 };
-
 export default FormItem;

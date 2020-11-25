@@ -19,6 +19,7 @@ class CreateTransactionsTable extends Migration
       $table->string('tag');
       $table->boolean('expense');
       $table->string('currency');
+      $table->timestamp('date');
       $table->timestamps();
     });
   }

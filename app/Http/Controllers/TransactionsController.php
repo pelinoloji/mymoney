@@ -21,9 +21,9 @@ class TransactionsController extends Controller
     $transaction->tag = $request->get('tag');
     $transaction->currency = $request->get('currency');
     $transaction->expense = $request->get('expense');
-
+    $transaction->date = $request->get('date');
     $transaction->save();
 
-    return redirect('/');;
+    return redirect('/');
   }
 }
