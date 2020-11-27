@@ -1,11 +1,10 @@
 import React from "react";
 import { Tabs, Col, Row } from "antd";
-import FormItem from "./FormItem";
+import FormElement from "./FormElement";
 
 const { TabPane } = Tabs;
 
 const Main = () => {
-    //
     const callback = key => {
         console.log(key);
     };
@@ -14,11 +13,11 @@ const Main = () => {
             <Col span={10}>
                 <Tabs defaultActiveKey="1" onChange={callback}>
                     <TabPane tab="Expenses" key="1">
-                        <FormItem />
+                        <FormElement />
                     </TabPane>
 
                     <TabPane tab="Income" key="2">
-                        <FormItem />
+                        <FormElement />
                     </TabPane>
                 </Tabs>
             </Col>

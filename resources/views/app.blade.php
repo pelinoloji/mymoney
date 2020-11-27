@@ -13,7 +13,7 @@
 <body>
 
   <!-- React root DOM -->
-  <div id="root">
+  <div id="app">
   </div>
 
   <!-- React JS -->

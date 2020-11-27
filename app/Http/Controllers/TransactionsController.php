@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use App\Models\Tag;
 
 class TransactionsController extends Controller
 {
@@ -14,15 +15,21 @@ class TransactionsController extends Controller
     return response()->json($transaction);
   }
 
+  public function create()
+  {
+    $tags = Tag::all();
+  }
+
   public function update(Transaction $transaction)
   {
-
     $transaction->update($this->validateTransactions());
     return redirect('/');
   }
 
   public function store(Request $request)
   {
+    $this->validateTransactions();
+
     $transaction = new Transaction();
 
     $transaction->amount = $request->get('amount');
@@ -35,6 +42,12 @@ class TransactionsController extends Controller
     return redirect('/');
   }
 
+  public function edit(Transaction $transaction)
+  {
+
+    return $transaction;
+  }
+
   public function validateTransactions()
   {
     return request()->validate([
@@ -42,7 +55,7 @@ class TransactionsController extends Controller
       'tag' => 'required',
       'currency' => 'required',
       'expense' => 'required',
-      'date' => 'required'
+      // 'date' => 'required'
     ]);
   }
 }
