@@ -8,7 +8,8 @@ import {
     DatePicker,
     Space,
     Divider,
-    Table
+    Table,
+    InputNumber
 } from "antd";
 import axios from "axios";
 
@@ -27,8 +28,8 @@ const columns = [
     },
     {
         title: "Date",
-        dataIndex: "date",
-        key: "date"
+        dataIndex: "transaction_date",
+        key: "transaction_date"
     },
     {
         title: "Action",
@@ -36,7 +37,7 @@ const columns = [
         key: "action",
         render: (text, record) => (
             <Space size="middle">
-                <Link to="/transactions/">Edit {record.name}</Link>
+                <Link to="/transaction/edit">Edit {record.name}</Link>
                 <Link>Delete</Link>
             </Space>
         )
@@ -50,9 +51,7 @@ const FormItem = () => {
         const onFinishFailed = errorInfo => {
             console.log("Failed:", errorInfo);
         };
-        const onChange = (date, dateString) => {
-            console.log(date, dateString);
-        };
+
         const handleResult = () => {
             axios
                 .get("/api/transactions")
@@ -74,7 +73,7 @@ const FormItem = () => {
                     tag: data.tag,
                     expense: true,
                     currency: data.currency,
-                    date: data.date
+                    transaction_date: data.transaction_date
                 }
             })
                 .then(response => {
@@ -118,7 +117,7 @@ const FormItem = () => {
                             }
                         ]}
                     >
-                        <Input />
+                        <InputNumber />
                     </Form.Item>
 
                     <Form.Item
@@ -145,9 +144,9 @@ const FormItem = () => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item label="Date" name="date" {...config}>
+                    <Form.Item label="Date" name="transaction_date">
                         <Space direction="vertical">
-                            <DatePicker onChange={e => console.log(e)} />
+                            <DatePicker />
                         </Space>
                     </Form.Item>
 

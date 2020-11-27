@@ -20,4 +20,5 @@ Route::get('/', function () {
 Route::prefix('api')->group(function () {
   Route::get('transactions', 'App\Http\Controllers\TransactionsController@index')->name('transactions.index');
   Route::post('transactions', 'App\Http\Controllers\TransactionsController@store')->name('transactions.store');
+  Route::put('transactions/{transactionID}/edit', 'App\Http\Controllers\TransactionsController@edit')->name('transactions.edit');
 });

@@ -1,16 +1,17 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import FormItem from "./FormItem";
+import Item from "./Item";
 import Main from "./Main";
 
 const App = () => {
     return (
-        <BrowserRouter>
+        <Router>
             <Switch>
-                <Route path="/" component={Main} />
+                <Route path="/asd" component={Item} />
+                <Route exact path="/" component={Main} />
             </Switch>
-        </BrowserRouter>
+        </Router>
     );
 };
 
