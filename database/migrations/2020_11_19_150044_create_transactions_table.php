@@ -15,8 +15,9 @@ class CreateTransactionsTable extends Migration
   {
     Schema::create('transactions', function (Blueprint $table) {
       $table->id();
-      $table->unsignedBigInteger('currency_id')->nullable();
-      $table->float('amount');
+      $table->unsignedBigInteger('currency_id');
+      $table->unsignedBigInteger('tag_id');
+      $table->float('amount', 8, 2);
       $table->string('tag');
       $table->boolean('expense');
       $table->string('currency');
@@ -25,8 +26,39 @@ class CreateTransactionsTable extends Migration
 
       $table->foreign('currency_id')
         ->references('id')
-        ->on('transactions')
+        ->on('currencies')
         ->onDelete('cascade');
+
+      $table->foreign('tag_id')
+        ->references('id')
+        ->on('tags')
+        ->onDelete('cascade');
+    });
+
+
+
+    Schema::create('currency_transactions', function (Blueprint $table) {
+      $table->id();
+      $table->unsignedBigInteger('currency_id');
+      $table->unsignedBigInteger('transaction_id');
+      $table->timestamps();
+
+      $table->unique(['transaction_id', 'currency_id']);
+
+      $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
+      $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
+    });
+
+    Schema::create('transaction_tags', function (Blueprint $table) {
+      $table->id();
+      $table->unsignedBigInteger('tag_id');
+      $table->unsignedBigInteger('transaction_id');
+      $table->timestamps();
+
+      $table->unique(['transaction_id', 'tag_id']);
+
+      $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
+      $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
     });
   }
 

@@ -13,11 +13,11 @@ class Transaction extends Model
 
   public function currencies()
   {
-    return $this->belongsToMany(Currency::class);
+    return $this->hasMany(Currency::class);
   }
 
   public function tags()
   {
-    return $this->belongsToMany(Tag::class);
+    return $this->hasMany(Tag::class);
   }
 }

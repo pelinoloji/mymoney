@@ -11,6 +11,8 @@ import {
     Divider,
     Table
 } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
 import axios from "axios";
 
 const { Option } = Select;
@@ -48,10 +50,20 @@ const FormElement = () => {
     try {
         const [results, setResults] = useState([]);
 
+        const [addCurrency, setAddCurrency] = useState({
+            items: ["GBP", "EURO", "USD"],
+            name: ""
+        });
+        const { items, name } = addCurrency;
+
+        const onNameChange = event => {
+            setAddCurrency({
+                name: event.target.value
+            });
+        };
         const onFinishFailed = errorInfo => {
             console.log("Failed:", errorInfo);
         };
-
         const handleResult = () => {
             axios
                 .get("/api/transactions")
@@ -84,20 +96,18 @@ const FormElement = () => {
                     console.log(error);
                 });
         };
+        const addItem = () => {
+            console.log("addItem");
+            setAddCurrency({
+                items: [...items, name || `New item ${index++}`],
+                name: ""
+            });
+        };
 
         useEffect(() => {
             handleResult();
         }, []);
 
-        const config = {
-            rules: [
-                {
-                    type: "object",
-                    required: true,
-                    message: "Please select time!"
-                }
-            ]
-        };
         return (
             <>
                 <Form
@@ -130,10 +140,41 @@ const FormElement = () => {
                             }
                         ]}
                     >
-                        <Select>
-                            <Option value="gbp">GBP</Option>
-                            <Option value="usd">USD</Option>
-                            <Option value="euro">EURO</Option>
+                        <Select
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: "4px 0" }} />
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexWrap: "nowrap",
+                                            padding: 8
+                                        }}
+                                    >
+                                        <Input
+                                            style={{ flex: "auto" }}
+                                            value={name}
+                                            onChange={onNameChange}
+                                        />
+                                        <a
+                                            style={{
+                                                flex: "none",
+                                                padding: "8px",
+                                                display: "block",
+                                                cursor: "pointer"
+                                            }}
+                                            onClick={addItem}
+                                        >
+                                            <PlusOutlined /> Add item
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
+                        >
+                            {items.map((item, index) => {
+                                return <Option key={item}>{item}</Option>;
+                            })}
                         </Select>
                     </Form.Item>
 

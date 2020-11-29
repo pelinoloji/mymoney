@@ -11,18 +11,20 @@ class TransactionsController extends Controller
 
   public function index(Transaction $transaction)
   {
-    $transaction = Transaction::all();
-    return response()->json($transaction);
+    $transaction = Transaction::orderByDesc('id')->get();
+    return $transaction;
   }
 
   public function create()
   {
-    $tags = Tag::all();
+    //
   }
 
   public function update(Transaction $transaction)
+  // public function update(Request $request)
   {
     $transaction->update($this->validateTransactions());
+    // Transaction::where('id', $transaction)->update($transaction);
     return redirect('/');
   }
 
@@ -46,6 +48,11 @@ class TransactionsController extends Controller
   {
 
     return $transaction;
+  }
+
+  public function delete(Transaction $transaction)
+  {
+    return $transaction->delete();
   }
 
   public function validateTransactions()

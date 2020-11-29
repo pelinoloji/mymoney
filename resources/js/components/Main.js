@@ -12,7 +12,7 @@ const Main = () => {
         <Row style={{ margin: "40px" }}>
             <Col span={10}>
                 <Tabs defaultActiveKey="1" onChange={callback}>
-                    <TabPane tab="Expenses" key="1">
+                    <TabPane tab="Expense" key="1">
                         <FormElement />
                     </TabPane>
 
