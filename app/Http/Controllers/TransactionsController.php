@@ -36,12 +36,16 @@ class TransactionsController extends Controller
 
     $transaction->amount = $request->get('amount');
     $transaction->tag = $request->get('tag');
-    $transaction->currency = $request->get('currency');
+    $transaction->currency = $request->get('currency_id');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
-    $transaction->save();
+    $transaction->tag_id = 1;
+    $transaction->currency_id = 1;
 
-    return redirect('/');
+    $transaction->save();
+    $transaction->tags()->attach(request('tags'));
+    $transaction->currencies()->attach(request('currencies'));
+    return $transaction;
   }
 
   public function edit(Transaction $transaction)

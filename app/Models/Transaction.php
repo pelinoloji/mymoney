@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Tag;
+use App\Models\Currency;
 
 class Transaction extends Model
 {
@@ -13,11 +14,11 @@ class Transaction extends Model
 
   public function currencies()
   {
-    return $this->hasMany(Currency::class);
+    return $this->belongsTo(Currency::class);
   }
 
   public function tags()
   {
-    return $this->hasMany(Tag::class);
+    return $this->belongsTo(Tag::class);
   }
 }
