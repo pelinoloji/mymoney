@@ -12,7 +12,9 @@ class TransactionsController extends Controller
   public function index(Transaction $transaction)
   {
     $transaction = Transaction::orderByDesc('id')->get();
-    return $transaction;
+    // $transaction = Transaction::all();
+    // $transaction = Transaction::table('amount')->count();
+    return response()->json($transaction);
   }
 
   public function create()
@@ -20,13 +22,19 @@ class TransactionsController extends Controller
     //
   }
 
-  public function update(Transaction $transaction)
-  // public function update(Request $request)
+  public function update(Transaction $transaction, $id, Request $request)
   {
     $transaction->update($this->validateTransactions());
-    // Transaction::where('id', $transaction)->update($transaction);
-    return redirect('/');
+
+    $transaction = Transaction::find($id);
+    $transaction->name = $request->get('name');
+    $transaction->price = $request->get('price');
+    $transaction->save();
+
+    return response()->json('Successfully Updated');
   }
+
+
 
   public function store(Request $request)
   {
@@ -36,27 +44,30 @@ class TransactionsController extends Controller
 
     $transaction->amount = $request->get('amount');
     $transaction->tag = $request->get('tag');
-    $transaction->currency = $request->get('currency_id');
+    $transaction->currency = $request->get('currency');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
-    $transaction->tag_id = 1;
-    $transaction->currency_id = 1;
+    // $transaction->tag_id = 1;
+    // $transaction->currency_id = 1;
 
     $transaction->save();
-    $transaction->tags()->attach(request('tags'));
-    $transaction->currencies()->attach(request('currencies'));
-    return $transaction;
+
+    // $transaction->tags()->attach(request('tags'));
+    // $transaction->currencies()->attach(request('currencies'));
+    return response()->json('Successfully added');
   }
 
-  public function edit(Transaction $transaction)
+  public function edit(Transaction $transaction, $id)
   {
-
-    return $transaction;
+    $transaction = Transaction::find($id);
+    return response()->json($transaction);
   }
 
-  public function delete(Transaction $transaction)
+  public function delete(Transaction $transaction, $id)
   {
-    return $transaction->delete();
+    $transaction = Transaction::find($id);
+    $transaction->delete();
+    return response()->json('Successfully Deleted');
   }
 
   public function validateTransactions()
