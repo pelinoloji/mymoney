@@ -13,11 +13,11 @@ const Main = () => {
             <Col span={10}>
                 <Tabs defaultActiveKey="1" onChange={callback}>
                     <TabPane tab="Expense" key="1">
-                        <FormElement />
+                        <FormElement expense />
                     </TabPane>
 
                     <TabPane tab="Income" key="2">
-                        <FormElement />
+                        <FormElement expense={false} />
                     </TabPane>
                 </Tabs>
             </Col>

@@ -9,9 +9,9 @@ import {
     DatePicker,
     Space,
     Divider,
-    Table,
-    Statistic
+    Table
 } from "antd";
+import "../../sass/app.scss";
 
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -22,18 +22,23 @@ const { Option } = Select;
 const columns = [
     {
         title: "Amount",
-        dataIndex: "amount",
-        key: "amount"
+        dataIndex: "amount"
+    },
+    {
+        title: "Currency",
+        dataIndex: "currency"
     },
     {
         title: "Category",
-        dataIndex: "tag",
-        key: "tag"
+        dataIndex: "tag"
+    },
+    {
+        title: "Expense/Income",
+        dataIndex: "expense"
     },
     {
         title: "Date",
-        dataIndex: "transaction_date",
-        key: "transaction_date"
+        dataIndex: "date"
     },
     {
         title: "Action",
@@ -48,7 +53,7 @@ const columns = [
     }
 ];
 
-const FormElement = () => {
+const FormElement = ({ expense }) => {
     try {
         const [results, setResults] = useState([]);
         const [currencies, setCurrencies] = useState(["GBP", "EURO", "USD"]);
@@ -60,10 +65,6 @@ const FormElement = () => {
                 errorInfo
             );
         };
-
-        function onChange(date, dateString) {
-            console.log(date, dateString, "date");
-        }
 
         const handleResult = () => {
             axios
@@ -77,18 +78,20 @@ const FormElement = () => {
         };
 
         const addTransaction = data => {
+            console.log(data, "data");
             axios({
                 method: "post",
                 url: "/api/transactions",
                 data: {
                     amount: data.amount,
                     tag: data.tag,
-                    expense: true,
+                    expense: expense,
                     currency: data.currency,
-                    transaction_date: "2020-11-05"
+                    transaction_date: data.transaction_date.format("YYYY-MM-DD")
                 }
             })
                 .then(response => {
+                    console.log(response);
                     handleResult();
                 })
                 .catch(error => {
@@ -113,6 +116,7 @@ const FormElement = () => {
                     onFinish={addTransaction}
                     onFinishFailed={onFinishFailed}
                     layout="vertical"
+                    rowClassName={record => (record.expense ? "green" : "red")}
                 >
                     <Form.Item
                         label="Amount"
@@ -241,14 +245,12 @@ const FormElement = () => {
                     </Form.Item>
 
                     <Form.Item label="Date" name="transaction_date">
-                        <Space direction="vertical">
-                            <DatePicker onChange={onChange} />
-                        </Space>
+                        <DatePicker />
                     </Form.Item>
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" id="post">
-                            Add Expense
+                            {expense ? "Add Expense" : "Add Income"}
                         </Button>
                     </Form.Item>
                     <Divider />
@@ -262,6 +264,9 @@ const FormElement = () => {
                                 dataSource={results}
                                 columns={columns}
                                 size="middle"
+                                rowClassName={(record, index) =>
+                                    record.expense ? "red" : "green"
+                                }
                             />
                         ) : null}
                     </div>
