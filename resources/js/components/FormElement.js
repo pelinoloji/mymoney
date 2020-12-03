@@ -18,40 +18,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 
 const { Option } = Select;
-
-const columns = [
-    {
-        title: "Amount",
-        dataIndex: "amount"
-    },
-    {
-        title: "Currency",
-        dataIndex: "currency"
-    },
-    {
-        title: "Category",
-        dataIndex: "tag"
-    },
-    {
-        title: "Expense/Income",
-        dataIndex: "expense"
-    },
-    {
-        title: "Date",
-        dataIndex: "date"
-    },
-    {
-        title: "Action",
-        dataIndex: "action",
-        key: "action",
-        render: (text, record) => (
-            <Space size="middle">
-                <Link to="/transaction/edit">Edit {record.name}</Link>
-                <Link>Delete</Link>
-            </Space>
-        )
-    }
-];
+const { RangePicker } = DatePicker;
 
 const FormElement = ({ expense }) => {
     try {
@@ -99,6 +66,52 @@ const FormElement = ({ expense }) => {
                 });
         };
 
+        const deleteTransaction = id => {
+            axios.delete(`api/transactions/${id}`).then(response => {
+                console.log(response, "res");
+                console.log(response.data, "data");
+                handleResult();
+            });
+        };
+        const columns = [
+            {
+                title: "Amount",
+                dataIndex: "amount"
+            },
+            {
+                title: "Currency",
+                dataIndex: "currency"
+            },
+            {
+                title: "Category",
+                dataIndex: "tag"
+            },
+            {
+                title: "Expense/Income",
+                dataIndex: "expense"
+            },
+            {
+                title: "Date",
+                dataIndex: "date"
+            },
+            {
+                title: "Action",
+                dataIndex: "id",
+                render: id => (
+                    <Space size="middle">
+                        <Link
+                            to="/transaction/edit"
+                            onClick={() => editTransaction}
+                        >
+                            Edit
+                        </Link>
+                        <Link to="/" onClick={() => deleteTransaction(id)}>
+                            Delete
+                        </Link>
+                    </Space>
+                )
+            }
+        ];
         useEffect(() => {
             handleResult();
         }, []);
@@ -255,8 +268,11 @@ const FormElement = ({ expense }) => {
                     </Form.Item>
                     <Divider />
                     <h3> {`Total: £ ${totalAmount}`}</h3>
-
                     <Divider />
+                    <Space direction="vertical" size={12}>
+                        <RangePicker />
+                    </Space>
+
                     <div>
                         {!!results?.length ? (
                             <Table
@@ -264,7 +280,7 @@ const FormElement = ({ expense }) => {
                                 dataSource={results}
                                 columns={columns}
                                 size="middle"
-                                rowClassName={(record, index) =>
+                                rowClassName={record =>
                                     record.expense ? "red" : "green"
                                 }
                             />

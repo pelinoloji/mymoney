@@ -13,13 +13,13 @@ class Transaction extends Model
   use HasFactory;
   protected $fillable = ['amount'];
 
-  public function currencies()
+  public function currency()
   {
     return $this->belongsTo(Currency::class);
   }
 
-  public function tags()
+  public function tag()
   {
-    return $this->belongsTo(Tag::class);
+    return $this->belongsToMany(Tag::class);
   }
 }
