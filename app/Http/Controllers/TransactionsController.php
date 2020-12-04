@@ -11,19 +11,15 @@ class TransactionsController extends Controller
 
   public function index(Transaction $transaction)
   {
-    // echo 'Hello Pelin';
     $transaction = Transaction::orderByDesc('id')->get();
-    // $transaction = Transaction::all();
-    // $transaction = Transaction::table('amount')->count();
     return response()->json($transaction);
   }
 
-  public function update(Transaction $transaction, $id, Request $request)
+  public function update($id, Request $request)
   {
-    $transaction->update($this->validateTransactions());
-
     $transaction = Transaction::find($id);
-    $transaction->name = $request->get('name');
+
+    $transaction->amount = $request->get('amount');
     $transaction->tag = $request->get('tag');
     $transaction->currency = $request->get('currency');
     $transaction->expense = $request->get('expense');
@@ -33,6 +29,11 @@ class TransactionsController extends Controller
     return response()->json('Successfully Updated');
   }
 
+  public function edit($id)
+  {
+    $transaction = Transaction::find($id);
+    return response()->json($transaction);
+  }
 
   public function store(Request $request)
   {
@@ -43,19 +44,15 @@ class TransactionsController extends Controller
     $transaction->currency = $request->get('currency');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
+
+    $transaction->save();
     // $transaction->tag_id = 1;
     // $transaction->currency_id = 1;
-    $transaction->save();
     // $transaction->tag()->attach(request('tags'));
     // $transaction->currencY()->attach(request('currencies'));
     return response()->json('Successfully added');
   }
 
-  // public function edit(Transaction $transaction, $id)
-  // {
-  //   $transaction = Transaction::find($id);
-  //   return response()->json($transaction);
-  // }
 
   public function destroy($id)
   {

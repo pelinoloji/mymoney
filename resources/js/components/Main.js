@@ -5,13 +5,10 @@ import FormElement from "./FormElement";
 const { TabPane } = Tabs;
 
 const Main = () => {
-    const callback = key => {
-        console.log(key);
-    };
     return (
         <Row style={{ margin: "40px" }}>
             <Col span={10}>
-                <Tabs defaultActiveKey="1" onChange={callback}>
+                <Tabs defaultActiveKey="1">
                     <TabPane tab="Expense" key="1">
                         <FormElement expense />
                     </TabPane>

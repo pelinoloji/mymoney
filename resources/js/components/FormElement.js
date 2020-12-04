@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
 import {
     Select,
     Form,
@@ -12,9 +11,7 @@ import {
     Table
 } from "antd";
 import "../../sass/app.scss";
-
 import { PlusOutlined } from "@ant-design/icons";
-
 import axios from "axios";
 
 const { Option } = Select;
@@ -26,6 +23,12 @@ const FormElement = ({ expense }) => {
         const [currencies, setCurrencies] = useState(["GBP", "EURO", "USD"]);
         const [tags, setTags] = useState(["Beauty", "Shopping"]);
         const [newTitle, setNewTitle] = useState("");
+        const [amount, setAmount] = useState(0);
+        const [currency, setCurrency] = useState("");
+        const [tag, setTag] = useState("");
+        const [date, setDate] = useState("");
+        const [currentId, setCurrentId] = useState(0);
+
         const onFinishFailed = errorInfo => {
             alert(
                 `Hi there 👋 Please make sure all fields are filled in correctly. `,
@@ -45,7 +48,6 @@ const FormElement = ({ expense }) => {
         };
 
         const addTransaction = data => {
-            console.log(data, "data");
             axios({
                 method: "post",
                 url: "/api/transactions",
@@ -66,13 +68,31 @@ const FormElement = ({ expense }) => {
                 });
         };
 
-        const deleteTransaction = id => {
-            axios.delete(`api/transactions/${id}`).then(response => {
-                console.log(response, "res");
+        const updateTransaction = data => {
+            axios({
+                method: "put",
+                url: `api/transactions/${currentId}`,
+                data: {
+                    amount: data.amount,
+                    tag: data.tag,
+                    expense: expense,
+                    currency: data.currency,
+                    transaction_date: data.transaction_date.format("YYYY-MM-DD")
+                }
+            }).then(response => {
                 console.log(response.data, "data");
+                setCurrentId(0);
                 handleResult();
             });
         };
+
+        const deleteTransaction = id => {
+            axios.delete(`api/transactions/${id}`).then(response => {
+                console.log(response, "res");
+                handleResult();
+            });
+        };
+
         const columns = [
             {
                 title: "Amount",
@@ -87,10 +107,6 @@ const FormElement = ({ expense }) => {
                 dataIndex: "tag"
             },
             {
-                title: "Expense/Income",
-                dataIndex: "expense"
-            },
-            {
                 title: "Date",
                 dataIndex: "date"
             },
@@ -99,10 +115,7 @@ const FormElement = ({ expense }) => {
                 dataIndex: "id",
                 render: id => (
                     <Space size="middle">
-                        <Link
-                            to="/transaction/edit"
-                            onClick={() => editTransaction}
-                        >
+                        <Link to="/" onClick={() => editTransaction(id)}>
                             Edit
                         </Link>
                         <Link to="/" onClick={() => deleteTransaction(id)}>
@@ -112,6 +125,18 @@ const FormElement = ({ expense }) => {
                 )
             }
         ];
+
+        const editTransaction = id => {
+            const current = results.filter(a => a.id === id);
+            setCurrentId(id);
+            setAmount(current.amount);
+            setCurrency(current.currency);
+            setTag(current.tag);
+            setDate(current.date);
+            console.log(id, "id");
+            console.log(current, "current");
+        };
+
         useEffect(() => {
             handleResult();
         }, []);
@@ -125,8 +150,7 @@ const FormElement = ({ expense }) => {
             <>
                 <Form
                     name="basic"
-                    initialValues={{ remember: true }}
-                    onFinish={addTransaction}
+                    onFinish={currentId ? updateTransaction : addTransaction}
                     onFinishFailed={onFinishFailed}
                     layout="vertical"
                     rowClassName={record => (record.expense ? "green" : "red")}
@@ -147,6 +171,7 @@ const FormElement = ({ expense }) => {
                     <Form.Item
                         label="Currency"
                         name="currency"
+                        value={currency}
                         rules={[
                             {
                                 required: true,
@@ -205,6 +230,7 @@ const FormElement = ({ expense }) => {
                     <Form.Item
                         label="Tag"
                         name="tag"
+                        value={tag}
                         rules={[
                             {
                                 required: true,
@@ -257,35 +283,53 @@ const FormElement = ({ expense }) => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item label="Date" name="transaction_date">
+                    <Form.Item
+                        label="Date"
+                        name="transaction_date"
+                        value={date}
+                    >
                         <DatePicker />
                     </Form.Item>
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" id="post">
-                            {expense ? "Add Expense" : "Add Income"}
+                            {currentId
+                                ? "Update"
+                                : expense
+                                ? "Add Expense"
+                                : "Add Income"}
                         </Button>
                     </Form.Item>
                     <Divider />
-                    <h3> {`Total: £ ${totalAmount}`}</h3>
-                    <Divider />
-                    <Space direction="vertical" size={12}>
-                        <RangePicker />
-                    </Space>
+                    {!currentId ? (
+                        <div>
+                            <h3> {`Total: £ ${totalAmount}`}</h3>
+                            <Space direction="vertical" size={12}>
+                                <RangePicker />
+                            </Space>
+                            <Button
+                                type="primary"
+                                htmlType=""
+                                style={{ margin: 10 }}
+                            >
+                                Filter
+                            </Button>
 
-                    <div>
-                        {!!results?.length ? (
-                            <Table
-                                key={results.id}
-                                dataSource={results}
-                                columns={columns}
-                                size="middle"
-                                rowClassName={record =>
-                                    record.expense ? "red" : "green"
-                                }
-                            />
-                        ) : null}
-                    </div>
+                            <div>
+                                {!!results?.length ? (
+                                    <Table
+                                        key={results.id}
+                                        dataSource={results}
+                                        columns={columns}
+                                        size="middle"
+                                        rowClassName={record =>
+                                            record.expense ? "red" : "green"
+                                        }
+                                    />
+                                ) : null}
+                            </div>
+                        </div>
+                    ) : null}
                 </Form>
             </>
         );
