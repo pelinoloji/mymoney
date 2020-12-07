@@ -2,14 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Button, DatePicker, Space, Divider, Table } from "antd";
 import "../../sass/app.scss";
-
 import DropDownInput from "./DropDownInput";
-import {
-    handleResult,
-    addTransaction,
-    updateTransaction,
-    deleteTransaction
-} from "./api";
+import MonthsDropdown from "./MonthsDropdown";
+// import * as api from "./api";
 
 const { RangePicker } = DatePicker;
 
@@ -21,8 +16,6 @@ const FormElement = ({ expense }) => {
         const [tag, setTag] = useState("");
         const [date, setDate] = useState("");
         const [currentId, setCurrentId] = useState(0);
-        const [currencies, setCurrencies] = useState(["GBP", "EURO", "USD"]);
-        const [tags, setTags] = useState(["Beauty", "Shopping"]);
 
         const onFinishFailed = errorInfo => {
             alert(
@@ -30,7 +23,6 @@ const FormElement = ({ expense }) => {
                 errorInfo
             );
         };
-
         const handleResult = () => {
             axios
                 .get("/api/transactions")
@@ -188,7 +180,7 @@ const FormElement = ({ expense }) => {
                         <div>
                             <h3> {`Total: £ ${totalAmount}`}</h3>
                             <Space direction="vertical" size={12}>
-                                <RangePicker />
+                                <MonthsDropdown />
                             </Space>
                             <Button
                                 type="primary"
