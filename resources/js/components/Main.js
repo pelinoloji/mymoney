@@ -6,7 +6,7 @@ const { TabPane } = Tabs;
 
 const Main = () => {
     return (
-        <Row style={{ margin: "40px" }}>
+        <Row style={{ margin: "40px" }} justify="center">
             <Col span={10}>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Expense" key="1">

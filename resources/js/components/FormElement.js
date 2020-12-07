@@ -1,33 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-    Select,
-    Form,
-    Input,
-    Button,
-    DatePicker,
-    Space,
-    Divider,
-    Table
-} from "antd";
+import { Form, Input, Button, DatePicker, Space, Divider, Table } from "antd";
 import "../../sass/app.scss";
-import { PlusOutlined } from "@ant-design/icons";
-import axios from "axios";
 
-const { Option } = Select;
+import DropDownInput from "./DropDownInput";
+import {
+    handleResult,
+    addTransaction,
+    updateTransaction,
+    deleteTransaction
+} from "./api";
+
 const { RangePicker } = DatePicker;
 
 const FormElement = ({ expense }) => {
     try {
         const [results, setResults] = useState([]);
-        const [currencies, setCurrencies] = useState(["GBP", "EURO", "USD"]);
-        const [tags, setTags] = useState(["Beauty", "Shopping"]);
-        const [newTitle, setNewTitle] = useState("");
         const [amount, setAmount] = useState(0);
         const [currency, setCurrency] = useState("");
         const [tag, setTag] = useState("");
         const [date, setDate] = useState("");
         const [currentId, setCurrentId] = useState(0);
+        const [currencies, setCurrencies] = useState(["GBP", "EURO", "USD"]);
+        const [tags, setTags] = useState(["Beauty", "Shopping"]);
 
         const onFinishFailed = errorInfo => {
             alert(
@@ -128,13 +123,12 @@ const FormElement = ({ expense }) => {
 
         const editTransaction = id => {
             const current = results.filter(a => a.id === id);
+
             setCurrentId(id);
             setAmount(current.amount);
             setCurrency(current.currency);
             setTag(current.tag);
             setDate(current.date);
-            console.log(id, "id");
-            console.log(current, "current");
         };
 
         useEffect(() => {
@@ -168,120 +162,9 @@ const FormElement = ({ expense }) => {
                         <Input type="number" />
                     </Form.Item>
 
-                    <Form.Item
-                        label="Currency"
-                        name="currency"
-                        value={currency}
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please pick a currency!"
-                            }
-                        ]}
-                    >
-                        <Select
-                            dropdownRender={menu => (
-                                <div>
-                                    {menu}
-                                    <Divider style={{ margin: "4px 0" }} />
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            flexWrap: "nowrap",
-                                            padding: 8
-                                        }}
-                                    >
-                                        <Input
-                                            style={{ flex: "auto" }}
-                                            value={newTitle}
-                                            onChange={e =>
-                                                setNewTitle(e.target.value)
-                                            }
-                                        />
-                                        <a
-                                            style={{
-                                                flex: "none",
-                                                padding: "8px",
-                                                display: "block",
-                                                cursor: "pointer"
-                                            }}
-                                            onClick={() => {
-                                                setCurrencies([
-                                                    ...currencies,
-                                                    newTitle
-                                                ]);
-                                                setNewTitle(" ");
-                                            }}
-                                        >
-                                            <PlusOutlined /> Add item
-                                        </a>
-                                    </div>
-                                </div>
-                            )}
-                        >
-                            {!!currencies?.length
-                                ? currencies.map((item, index) => {
-                                      return <Option key={item}>{item}</Option>;
-                                  })
-                                : null}
-                        </Select>
-                    </Form.Item>
+                    <DropDownInput currencyy />
 
-                    <Form.Item
-                        label="Tag"
-                        name="tag"
-                        value={tag}
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please pick a category!"
-                            }
-                        ]}
-                    >
-                        <Select
-                            dropdownRender={menu => (
-                                <div>
-                                    {menu}
-                                    <Divider style={{ margin: "4px 0" }} />
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            flexWrap: "nowrap",
-                                            padding: 8
-                                        }}
-                                    >
-                                        <Input
-                                            style={{ flex: "auto" }}
-                                            value={newTitle}
-                                            onChange={e =>
-                                                setNewTitle(e.target.value)
-                                            }
-                                        />
-                                        <a
-                                            style={{
-                                                flex: "none",
-                                                padding: "8px",
-                                                display: "block",
-                                                cursor: "pointer"
-                                            }}
-                                            onClick={() => {
-                                                setTags([...tags, newTitle]);
-                                                setNewTitle("");
-                                            }}
-                                        >
-                                            <PlusOutlined /> Add item
-                                        </a>
-                                    </div>
-                                </div>
-                            )}
-                        >
-                            {!!tags?.length
-                                ? tags.map((item, index) => {
-                                      return <Option key={item}>{item}</Option>;
-                                  })
-                                : null}
-                        </Select>
-                    </Form.Item>
+                    <DropDownInput taggs />
 
                     <Form.Item
                         label="Date"
