@@ -10,7 +10,8 @@ import {
     Table,
     Select,
     Row,
-    Col
+    Col,
+    Radio
 } from "antd";
 import moment from "moment";
 
@@ -33,6 +34,7 @@ const FormElement = ({ expense }) => {
         const [date, setDate] = useState("");
         const [currentId, setCurrentId] = useState(0);
         const [total, setTotal] = useState([]);
+        const [value, setValue] = useState(1);
 
         const onFinishFailed = errorInfo => {
             alert(
@@ -62,6 +64,7 @@ const FormElement = ({ expense }) => {
                     tag_id: data.tag_id,
                     expense: expense,
                     currency_id: data.currency_id,
+                    recurrence: data.recurrence,
                     transaction_date: data.transaction_date.format("YYYY-MM-DD")
                 }
             })
@@ -83,6 +86,7 @@ const FormElement = ({ expense }) => {
                     tag_id: data.tag_id,
                     expense: expense,
                     currency_id: data.currency_id,
+                    recurrence: data.recurrence,
                     transaction_date: data.transaction_date.format("YYYY-MM-DD")
                 }
             }).then(response => {
@@ -166,6 +170,10 @@ const FormElement = ({ expense }) => {
         // });
         // const totalAmount = amountArr.reduce((acc, res) => acc + res, 0);
 
+        const onChange = e => {
+            console.log("radio checked", e.target.value);
+            setValue(e.target.value);
+        };
         return (
             <>
                 <Form
@@ -191,7 +199,14 @@ const FormElement = ({ expense }) => {
                     <DropDownInput currencyy />
 
                     <DropDownInput taggs />
-
+                    <Form.Item name="recurrence">
+                        <Radio.Group onChange={onChange} value={value}>
+                            <Radio value={1}>None</Radio>
+                            <Radio value={2}>Daily</Radio>
+                            <Radio value={3}>Weekly</Radio>
+                            <Radio>Monthly</Radio>
+                        </Radio.Group>
+                    </Form.Item>
                     <Form.Item
                         label="Date"
                         name="transaction_date"

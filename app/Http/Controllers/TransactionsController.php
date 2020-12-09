@@ -27,13 +27,10 @@ class TransactionsController extends Controller
 
     // dd($date);
 
-    // $tagName = Transaction::join('tags', 'tags.id', '=', 'transactions.tag_id')
-    //   ->select('tags.*', 'tags.name')
-    //   ->get(); //??
+    // $tagName = Transaction::join('tags', 'tags.id', '=', 'transactions.tag_id')->select('name')->get();
 
-    // $tagList = Transaction::where('tags')->get();
 
-    // dd($tagList);
+    // dd($tagName);
 
 
     return response()->json(
@@ -55,6 +52,7 @@ class TransactionsController extends Controller
     $transaction->currency_id = $request->get('currency_id)');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
+    $transaction->recurrence = $request->get('recurrence');
     $transaction->save();
 
     return response()->json('Successfully Updated');
@@ -75,6 +73,7 @@ class TransactionsController extends Controller
     $transaction->currency_id = $request->get('currency_id');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
+    $transaction->recurrence = $request->get('recurrence');
 
     $transaction->save();
     $transaction->tag_id = 1;
@@ -97,7 +96,8 @@ class TransactionsController extends Controller
       // 'tag' => 'required',
       // 'currency' => 'required',
       'expense' => 'required',
-      // 'date' => 'required'
+      // 'date' => 'required',
+      // 'recurrence' => "required"
     ]);
   }
 }
