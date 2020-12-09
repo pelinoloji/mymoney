@@ -13,6 +13,6 @@ class Tag extends Model
 
   public function transactions()
   {
-    return $this->hasMany(Transaction::class);
+    return $this->hasMany(Transaction::class, 'tag_id');
   }
 }

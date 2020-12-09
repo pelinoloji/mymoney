@@ -17,7 +17,6 @@ class CreateTransactionsTagsTable extends Migration
       $table->id();
       $table->unsignedBigInteger('transaction_id');
       $table->unsignedBigInteger('tag_id');
-      $table->timestamps();
     });
   }
 

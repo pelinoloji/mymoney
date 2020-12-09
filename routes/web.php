@@ -21,11 +21,6 @@ Route::get('/', function () {
   return view('app');
 });
 
-// Route::get('/transactions/{id}', function () {
-//   return view('app');
-// });
-
-
 Route::prefix('api')->group(function () {
   Route::get('transactions', 'App\Http\Controllers\TransactionsController@index')->name('transactions.index');
   Route::post('transactions', 'App\Http\Controllers\TransactionsController@store')->name('transactions.store');
@@ -33,27 +28,3 @@ Route::prefix('api')->group(function () {
   Route::put('transactions/{id}', 'App\Http\Controllers\TransactionsController@update')->name('transactions.update');
   Route::delete('transactions/{id}', 'App\Http\Controllers\TransactionsController@destroy')->name('transactions.destroy');
 });
-
-
-// Route::get('test', function () {
-
-//   $transaction = Transaction::with('currency', 'tag')->get();
-//   $tag = new Tag();
-//   $tag->name = uniqid('testing-');
-//   $tag->save();
-
-//   $transaction->tag()->sync([$tag->id]);
-
-//   $transaction->load('tag');
-
-//   dd($transaction->toSql());
-//   // $transaction->load('currencies');
-//   // $transaction->currency_id = 1;
-//   // $transaction->save();
-//   // Currency::create(['name' => 'USD']);
-
-//   // return $transaction;
-//   // return Currency::all();
-
-//   return $transaction;
-// });

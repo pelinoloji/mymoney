@@ -7,6 +7,7 @@ const DropDownInput = ({ taggs, currencyy }) => {
     const [newTitle, setNewTitle] = useState("");
     const [currencies, setCurrencies] = useState(["GBP", "EURO", "USD"]);
     const [tags, setTags] = useState(["Beauty", "Shopping"]);
+    const [reccuring, setReccuring] = useState(["daily", "weekly", "monthly"]);
 
     return (
         <Form.Item

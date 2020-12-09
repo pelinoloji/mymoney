@@ -11,7 +11,7 @@ use App\Models\Currency;
 class Transaction extends Model
 {
   use HasFactory;
-  protected $fillable = ['amount'];
+  protected $fillable = ['amount', 'currency', 'date', 'tag'];
 
   public function currency()
   {

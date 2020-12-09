@@ -17,10 +17,6 @@ class CreateTransactionsTable extends Migration
       $table->id();
       $table->unsignedBigInteger('tag_id')->nullable();
       $table->unsignedBigInteger('currency_id')->nullable();
-
-      $table->string('tag');
-      $table->string('currency');
-
       $table->float('amount', 8, 2);
       $table->boolean('expense');
       $table->date('date');
@@ -45,6 +41,7 @@ class CreateTransactionsTable extends Migration
    */
   public function down()
   {
+    // first you should drop foreign keys look for it
     Schema::dropIfExists('transactions');
   }
 }

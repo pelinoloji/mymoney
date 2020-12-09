@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Form, Input, Button, DatePicker, Space, Divider, Table } from "antd";
+import {
+    Form,
+    Input,
+    Button,
+    DatePicker,
+    Space,
+    Divider,
+    Table,
+    Select,
+    Row,
+    Col
+} from "antd";
+import moment from "moment";
+
 import "../../sass/app.scss";
 import DropDownInput from "./DropDownInput";
 import MonthsDropdown from "./MonthsDropdown";
 // import * as api from "./api";
-
 const { RangePicker } = DatePicker;
+
+const dateFormat = "YYYY/MM/DD";
+const monthFormat = "YYYY/MM";
+const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
 
 const FormElement = ({ expense }) => {
     try {
@@ -16,6 +32,7 @@ const FormElement = ({ expense }) => {
         const [tag, setTag] = useState("");
         const [date, setDate] = useState("");
         const [currentId, setCurrentId] = useState(0);
+        const [total, setTotal] = useState([]);
 
         const onFinishFailed = errorInfo => {
             alert(
@@ -27,7 +44,9 @@ const FormElement = ({ expense }) => {
             axios
                 .get("/api/transactions")
                 .then(response => {
-                    setResults(response.data);
+                    setResults(response.data.transactions);
+                    setTotal(response.data.total);
+                    console.log(response);
                 })
                 .catch(error => {
                     console.log(error);
@@ -39,10 +58,10 @@ const FormElement = ({ expense }) => {
                 method: "post",
                 url: "/api/transactions",
                 data: {
-                    amount: data.amount,
-                    tag: data.tag,
+                    amount: data.amount < 0 ? data.amount * -1 : data.amount,
+                    tag_id: data.tag_id,
                     expense: expense,
-                    currency: data.currency,
+                    currency_id: data.currency_id,
                     transaction_date: data.transaction_date.format("YYYY-MM-DD")
                 }
             })
@@ -61,9 +80,9 @@ const FormElement = ({ expense }) => {
                 url: `api/transactions/${currentId}`,
                 data: {
                     amount: data.amount,
-                    tag: data.tag,
+                    tag_id: data.tag_id,
                     expense: expense,
-                    currency: data.currency,
+                    currency_id: data.currency_id,
                     transaction_date: data.transaction_date.format("YYYY-MM-DD")
                 }
             }).then(response => {
@@ -79,7 +98,22 @@ const FormElement = ({ expense }) => {
                 handleResult();
             });
         };
-
+        // const exchange = () => {
+        //     axios
+        //         .get("https://api.exchangeratesapi.io/latest", {
+        //             headers: {
+        //                 "Test-Header": "test-value"
+        //             }
+        //         })
+        //         .then(response => {
+        //             // setResults(response.data);
+        //             // setTotal(response.data.total);
+        //             console.log(response, "exchange");
+        //         })
+        //         .catch(error => {
+        //             console.log(error);
+        //         });
+        // };
         const columns = [
             {
                 title: "Amount",
@@ -87,11 +121,11 @@ const FormElement = ({ expense }) => {
             },
             {
                 title: "Currency",
-                dataIndex: "currency"
+                dataIndex: "currency_id"
             },
             {
                 title: "Category",
-                dataIndex: "tag"
+                dataIndex: "tag_id"
             },
             {
                 title: "Date",
@@ -114,7 +148,7 @@ const FormElement = ({ expense }) => {
         ];
 
         const editTransaction = id => {
-            const current = results.filter(a => a.id === id);
+            const current = results.filter(curr => curr.id === id);
 
             setCurrentId(id);
             setAmount(current.amount);
@@ -127,10 +161,10 @@ const FormElement = ({ expense }) => {
             handleResult();
         }, []);
 
-        const amountArr = results.map((res, index) => {
-            return res.amount;
-        });
-        const totalAmount = amountArr.reduce((acc, res) => acc + res, 0);
+        // const amountArr = results.map((res, index) => {
+        //     return res.amount;
+        // });
+        // const totalAmount = amountArr.reduce((acc, res) => acc + res, 0);
 
         return (
             <>
@@ -178,9 +212,32 @@ const FormElement = ({ expense }) => {
                     <Divider />
                     {!currentId ? (
                         <div>
-                            <h3> {`Total: £ ${totalAmount}`}</h3>
+                            <h3 style={{ color: "#ec3b83" }}>TOTAL </h3>
+
+                            {total.map(sum => (
+                                <div>
+                                    <span>{sum.name}</span>
+                                    <span>{sum.sum}</span>
+                                </div>
+                            ))}
+                            {/* <Button type="default" onClick={exchange}>
+                                Exchange
+                            </Button> */}
+                            {/* <Select style={{ width: 120 }}>
+                                {total.map(sum => (
+                                    <Option value={sum.name}>{sum.name}</Option>
+                                ))}
+                            </Select> */}
+
+                            <Divider />
                             <Space direction="vertical" size={12}>
-                                <MonthsDropdown />
+                                <RangePicker
+                                    defaultValue={[
+                                        moment("2015/01/01", dateFormat),
+                                        moment("2015/01/01", dateFormat)
+                                    ]}
+                                    format={dateFormat}
+                                />
                             </Space>
                             <Button
                                 type="primary"
@@ -189,7 +246,6 @@ const FormElement = ({ expense }) => {
                             >
                                 Filter
                             </Button>
-
                             <div>
                                 {!!results?.length ? (
                                     <Table

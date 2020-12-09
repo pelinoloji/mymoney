@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use App\Models\Currency;
 use App\Models\Tag;
 
 class TransactionsController extends Controller
@@ -11,8 +12,38 @@ class TransactionsController extends Controller
 
   public function index(Transaction $transaction)
   {
-    $transaction = Transaction::orderByDesc('id')->get();
-    return response()->json($transaction);
+    $transaction = Transaction::orderByDesc('id')
+      ->with('currency', 'tag')
+      ->get();
+
+    $getTotal = Transaction::groupBy('currency_id')
+      ->selectRaw('sum(amount) as sum, currencies.name')
+      ->join('currencies', 'currencies.id', '=', 'transactions.currency_id')
+      ->get();
+
+
+    // $month = Transaction::groupBy('date')->get();
+    // $date = date('F', strtotime($month));
+
+    // dd($date);
+
+    // $tagName = Transaction::join('tags', 'tags.id', '=', 'transactions.tag_id')
+    //   ->select('tags.*', 'tags.name')
+    //   ->get(); //??
+
+    // $tagList = Transaction::where('tags')->get();
+
+    // dd($tagList);
+
+
+    return response()->json(
+      [
+        'transactions' => $transaction,
+        'total' => $getTotal,
+        // 'tagName' => $tagName,
+        // 'currencyList' => $currencyList
+      ]
+    );
   }
 
   public function update($id, Request $request)
@@ -20,8 +51,8 @@ class TransactionsController extends Controller
     $transaction = Transaction::find($id);
 
     $transaction->amount = $request->get('amount');
-    $transaction->tag = $request->get('tag');
-    $transaction->currency = $request->get('currency');
+    $transaction->tag_id = $request->get('tag');
+    $transaction->currency_id = $request->get('currency_id)');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
     $transaction->save();
@@ -40,16 +71,15 @@ class TransactionsController extends Controller
     $this->validateTransactions();
     $transaction = new Transaction();
     $transaction->amount = $request->get('amount');
-    $transaction->tag = $request->get('tag');
-    $transaction->currency = $request->get('currency');
+    $transaction->tag_id = $request->get('tag');
+    $transaction->currency_id = $request->get('currency_id');
     $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
 
     $transaction->save();
-    // $transaction->tag_id = 1;
-    // $transaction->currency_id = 1;
-    // $transaction->tag()->attach(request('tags'));
-    // $transaction->currencY()->attach(request('currencies'));
+    $transaction->tag_id = 1;
+    $transaction->currency_id = 1;
+    $transaction->tag()->attach(request('tag'));
     return response()->json('Successfully added');
   }
 
@@ -64,8 +94,8 @@ class TransactionsController extends Controller
   {
     return request()->validate([
       'amount' => 'required',
-      'tag' => 'required',
-      'currency' => 'required',
+      // 'tag' => 'required',
+      // 'currency' => 'required',
       'expense' => 'required',
       // 'date' => 'required'
     ]);
