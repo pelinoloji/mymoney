@@ -15,8 +15,18 @@ class CreateTransactionsTagsTable extends Migration
   {
     Schema::create('tag_transaction', function (Blueprint $table) {
       $table->id();
-      $table->unsignedBigInteger('transaction_id');
-      $table->unsignedBigInteger('tag_id');
+      $table->unsignedBigInteger('transaction_id')->nullable();
+      $table->unsignedBigInteger('tag_id')->nullable();
+
+      $table->foreign('tag_id')
+        ->references('id')
+        ->on('tags')
+        ->onDelete('cascade');
+
+      $table->foreign('transaction_id')
+        ->references('id')
+        ->on('transactions')
+        ->onDelete('cascade');
     });
   }
 

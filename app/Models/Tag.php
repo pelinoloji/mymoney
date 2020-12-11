@@ -9,10 +9,12 @@ use App\Models\Transaction;
 
 class Tag extends Model
 {
+
   use HasFactory;
+  protected $fillable = ['name'];
 
   public function transactions()
   {
-    return $this->hasMany(Transaction::class, 'tag_id');
+    return $this->hasMany(Transaction::class);
   }
 }

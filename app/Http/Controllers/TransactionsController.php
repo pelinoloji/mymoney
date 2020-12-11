@@ -21,65 +21,60 @@ class TransactionsController extends Controller
       ->join('currencies', 'currencies.id', '=', 'transactions.currency_id')
       ->get();
 
+    $getCurrencies = Currency::all();
+    $getTags = Tag::all();
 
-    // $month = Transaction::groupBy('date')->get();
-    // $date = date('F', strtotime($month));
-
-    // dd($date);
-
-    // $tagName = Transaction::join('tags', 'tags.id', '=', 'transactions.tag_id')->select('name')->get();
-
-
-    // dd($tagName);
-
+    // if (request('tag')) {
+    //   $transaction = Tag::where('name', request('tag'))->firstOrFail()->transaction;
+    // } else {
+    //   $transaction = Transaction::latest()->get();
+    // }
+    // return response()->json('kisfmet');
 
     return response()->json(
       [
         'transactions' => $transaction,
         'total' => $getTotal,
-        // 'tagName' => $tagName,
-        // 'currencyList' => $currencyList
+        'currencies' => $getCurrencies,
+        'tags' => $getTags
       ]
     );
   }
 
-  public function update($id, Request $request)
-  {
-    $transaction = Transaction::find($id);
-
-    $transaction->amount = $request->get('amount');
-    $transaction->tag_id = $request->get('tag');
-    $transaction->currency_id = $request->get('currency_id)');
-    $transaction->expense = $request->get('expense');
-    $transaction->date = $request->get('transaction_date');
-    $transaction->recurrence = $request->get('recurrence');
-    $transaction->save();
-
-    return response()->json('Successfully Updated');
-  }
-
-  public function edit($id)
-  {
-    $transaction = Transaction::find($id);
-    return response()->json($transaction);
-  }
 
   public function store(Request $request)
   {
     $this->validateTransactions();
     $transaction = new Transaction();
     $transaction->amount = $request->get('amount');
-    $transaction->tag_id = $request->get('tag');
-    $transaction->currency_id = $request->get('currency_id');
-    $transaction->expense = $request->get('expense');
     $transaction->date = $request->get('transaction_date');
+    $transaction->currency_id = $request->get('currency_id');
     $transaction->recurrence = $request->get('recurrence');
-
     $transaction->save();
-    $transaction->tag_id = 1;
-    $transaction->currency_id = 1;
-    $transaction->tag()->attach(request('tag'));
-    return response()->json('Successfully added');
+
+    $transaction->tag()->attach(request('tags'));
+
+    return response()->json('Successfully added', $transaction);
+  }
+
+
+  public function update($id, Request $request)
+  {
+    $transaction = Transaction::find($id);
+    $transaction->amount = $request->get('amount');
+    $transaction->date = $request->get('transaction_date');
+    $transaction->currency_id = $request->get('currency_id');
+    $transaction->recurrence = $request->get('recurrence');
+    $transaction->save();
+
+    return response()->json('Successfully Updated', $transaction);
+  }
+
+
+  public function edit($id)
+  {
+    $transaction = Transaction::find($id);
+    return response()->json($transaction, 'Successfully edited');
   }
 
 
@@ -89,13 +84,14 @@ class TransactionsController extends Controller
     return response()->json('Successfully Deleted');
   }
 
+
   public function validateTransactions()
   {
     return request()->validate([
-      'amount' => 'required',
+      // 'amount' => 'required',
       // 'tag' => 'required',
       // 'currency' => 'required',
-      'expense' => 'required',
+      // 'expense' => 'required',
       // 'date' => 'required',
       // 'recurrence' => "required"
     ]);

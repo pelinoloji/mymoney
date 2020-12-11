@@ -24,6 +24,8 @@ Route::get('/', function () {
 Route::prefix('api')->group(function () {
   Route::get('transactions', 'App\Http\Controllers\TransactionsController@index')->name('transactions.index');
   Route::post('transactions', 'App\Http\Controllers\TransactionsController@store')->name('transactions.store');
+  Route::post('tag', 'App\Http\Controllers\TagController@store')->name('tag.store');
+  Route::post('currency', 'App\Http\Controllers\CurrencyController@store')->name('currency.store');
   Route::get('transactions/{id}/edit', 'App\Http\Controllers\TransactionsController@edit')->name('transactions.edit');
   Route::put('transactions/{id}', 'App\Http\Controllers\TransactionsController@update')->name('transactions.update');
   Route::delete('transactions/{id}', 'App\Http\Controllers\TransactionsController@destroy')->name('transactions.destroy');

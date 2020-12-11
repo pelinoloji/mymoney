@@ -9,9 +9,9 @@ use App\Models\Transaction;
 
 class Currency extends Model
 {
-  protected $fillable = ['name'];
 
   use HasFactory;
+  protected $fillable = ['name'];
 
   public function transactions()
   {

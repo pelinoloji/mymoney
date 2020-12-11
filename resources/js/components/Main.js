@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs, Col, Row } from "antd";
-import FormElement from "./FormElement";
+import Transactions from "./Transactions";
 
 const { TabPane } = Tabs;
 
@@ -10,11 +10,11 @@ const Main = () => {
             <Col span={10}>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Expense" key="1">
-                        <FormElement expense />
+                        <Transactions expense />
                     </TabPane>
 
                     <TabPane tab="Income" key="2">
-                        <FormElement expense={false} />
+                        <Transactions expense={false} />
                     </TabPane>
                 </Tabs>
             </Col>
