@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
       $table->unsignedBigInteger('currency_id')->nullable();
       $table->string('recurrence')->nullable();
       $table->float('amount', 8, 2);
+      $table->boolean('expense');
       $table->date('date');
       $table->timestamps();
 

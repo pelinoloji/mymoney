@@ -48,13 +48,16 @@ class TransactionsController extends Controller
     $transaction = new Transaction();
     $transaction->amount = $request->get('amount');
     $transaction->date = $request->get('transaction_date');
+    $transaction->expense = $request->get('expense');
     $transaction->currency_id = $request->get('currency_id');
     $transaction->recurrence = $request->get('recurrence');
     $transaction->save();
 
     $transaction->tag()->attach(request('tags'));
 
-    return response()->json('Successfully added', $transaction);
+    dd($transaction);
+
+    return response()->json($transaction, 'Successfully added');
   }
 
 
@@ -63,6 +66,7 @@ class TransactionsController extends Controller
     $transaction = Transaction::find($id);
     $transaction->amount = $request->get('amount');
     $transaction->date = $request->get('transaction_date');
+    $transaction->expense = $request->get('expense');
     $transaction->currency_id = $request->get('currency_id');
     $transaction->recurrence = $request->get('recurrence');
     $transaction->save();
@@ -81,18 +85,17 @@ class TransactionsController extends Controller
   public function destroy($id)
   {
     $transaction = Transaction::findOrFail($id)->delete();
-    return response()->json('Successfully Deleted');
+    return response()->json('Successfully Deleted', $transaction);
   }
 
 
   public function validateTransactions()
   {
     return request()->validate([
-      // 'amount' => 'required',
-      // 'tag' => 'required',
-      // 'currency' => 'required',
-      // 'expense' => 'required',
-      // 'date' => 'required',
+      'amount' => 'required',
+      'tag_id' => 'required',
+      'currency_id' => 'required',
+      'transaction_date' => 'required',
       // 'recurrence' => "required"
     ]);
   }

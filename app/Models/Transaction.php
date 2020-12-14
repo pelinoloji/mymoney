@@ -11,7 +11,7 @@ use App\Models\Currency;
 class Transaction extends Model
 {
   use HasFactory;
-  protected $fillable = ['amount', 'date', 'recurrence'];
+  protected $fillable = ['amount', 'date', 'currency_id', 'tag_id', 'recurrence'];
 
   public function currency()
 
@@ -21,6 +21,6 @@ class Transaction extends Model
 
   public function tag()
   {
-    return $this->belongsToMany(Tag::class, 'tag_transaction', 'tag_id');
+    return $this->belongsToMany(Tag::class, 'tag_transaction', 'tag_id', 'transaction_id');
   }
 }

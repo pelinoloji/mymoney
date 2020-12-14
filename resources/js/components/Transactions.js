@@ -56,13 +56,14 @@ const Transactions = ({ expense }) => {
 
         const addTransaction = data => {
             const payload = {
-                amount: data.amount < 0 ? data.amount * -1 : data.amount,
-                tags: tags[0].name,
-                currency_id: currencies[0].id,
+                amount: expense ? data.amount * -1 : data.amount,
+                tag_id: data.tag_id,
+                expense: expense,
+                currency_id: data.currency_id,
                 recurrence: data.recurrence,
                 transaction_date: data.transaction_date.format("YYYY-MM-DD")
             };
-            console.log(payload, "payload");
+            // console.log(payload, "payload");
 
             axios({
                 method: "post",
@@ -83,8 +84,9 @@ const Transactions = ({ expense }) => {
                 method: "put",
                 url: `api/transactions/${currentId}`,
                 data: {
-                    amount: data.amount,
-                    tag_id: 2,
+                    amount: expense ? data.amount * -1 : data.amount,
+                    tag_id: data.tag_id,
+                    expense: expense,
                     currency_id: data.currency_id,
                     recurrence: data.recurrence,
                     transaction_date: data.transaction_date.format("YYYY-MM-DD")
@@ -106,11 +108,12 @@ const Transactions = ({ expense }) => {
         const columns = [
             {
                 title: "Amount",
-                dataIndex: "amount"
+                dataIndex: "amount",
+                render: amount => (amount < 0 ? amount * -1 : amount)
             },
             {
                 title: "Currency",
-                dataIndex: ["currency", "name"]
+                dataIndex: "currencies"
             },
             {
                 title: "Tag",
@@ -137,10 +140,7 @@ const Transactions = ({ expense }) => {
         ];
 
         const editTransaction = id => {
-            console.log(id, "id");
-            console.log(results, "edit in results");
             const current = results.filter(curr => curr.id === id);
-            console.log(current, "curreny in edit");
             setCurrentId(id);
             setAmount(current.amount);
             setCurrencies(current.currencies);
@@ -165,7 +165,6 @@ const Transactions = ({ expense }) => {
                     onFinish={currentId ? updateTransaction : addTransaction}
                     onFinishFailed={onFinishFailed}
                     layout="vertical"
-                    rowClassName={record => (record.expense ? "green" : "red")}
                 >
                     <Form.Item
                         label="Amount"
@@ -185,9 +184,7 @@ const Transactions = ({ expense }) => {
                         loadData={loadData}
                     />
 
-                    <Form.Item label="Tag" name="tag" value={tags}>
-                        <TagElement tags={tags} loadData={loadData} />
-                    </Form.Item>
+                    <TagElement tags={tags} loadData={loadData} />
 
                     <Form.Item name="recurrence">
                         <Radio.Group onChange={onChange} value={value}>
@@ -215,53 +212,52 @@ const Transactions = ({ expense }) => {
                                 : "Add Income"}
                         </Button>
                     </Form.Item>
-
-                    <Divider />
-                    {!currentId ? (
-                        <div>
-                            <h3 style={{ color: "#ec3b83" }}>TOTAL </h3>
-                            {total.map(sum => (
-                                <div key={sum.name}>
-                                    <span>{sum.name}</span>
-                                    <span>{sum.sum}</span>
-                                </div>
-                            ))}
-                            <Divider />
-
-                            <Space direction="vertical" size={12}>
-                                <RangePicker
-                                    defaultValue={[
-                                        moment("2015/01/01", dateFormat),
-                                        moment("2015/01/01", dateFormat)
-                                    ]}
-                                    format={dateFormat}
-                                />
-                            </Space>
-
-                            <Button
-                                type="primary"
-                                htmlType=""
-                                style={{ margin: 10 }}
-                            >
-                                Filter
-                            </Button>
-
-                            <div>
-                                {!!results?.length ? (
-                                    <Table
-                                        key={results.id}
-                                        dataSource={results}
-                                        columns={columns}
-                                        size="middle"
-                                        rowClassName={record =>
-                                            record.expense ? "red" : "green"
-                                        }
-                                    />
-                                ) : null}
-                            </div>
-                        </div>
-                    ) : null}
                 </Form>
+                <Divider />
+                {!currentId ? (
+                    <div>
+                        <h3 style={{ color: "#ec3b83" }}>TOTAL </h3>
+                        {total.map(sum => (
+                            <div key={sum.name}>
+                                <span>{sum.name}</span>
+                                <span>{sum.sum}</span>
+                            </div>
+                        ))}
+                        <Divider />
+
+                        <Space direction="vertical" size={12}>
+                            <RangePicker
+                                defaultValue={[
+                                    moment("2015/01/01", dateFormat),
+                                    moment("2015/01/01", dateFormat)
+                                ]}
+                                format={dateFormat}
+                            />
+                        </Space>
+
+                        <Button
+                            type="primary"
+                            htmlType=""
+                            style={{ margin: 10 }}
+                        >
+                            Filter
+                        </Button>
+
+                        <div>
+                            {!!results?.length ? (
+                                <Table
+                                    key={results.id}
+                                    dataSource={results}
+                                    columns={columns}
+                                    size="middle"
+                                    rowClassName={record =>
+                                        record.expense ? "red" : "green"
+                                    }
+                                />
+                            ) : null}
+                        </div>
+                    </div>
+                ) : null}
             </>
         );
     } catch (err) {

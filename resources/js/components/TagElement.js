@@ -16,73 +16,74 @@ const TagElement = ({ tags, loadData }) => {
         })
             .then(response => {
                 console.log(response, "addTag result");
+                setNewTitle("");
                 loadData();
             })
             .catch(error => {
-                console.log(error, "tag hasnt added on DB");
+                console.log(error, "tag is not added on DB");
             });
     };
 
     const addNewTagName = () => {
-        newTitle.includes(...tags) ? setTags() : addTag();
+        newTitle.includes(...tags) ? alert("tag list") : addTag();
         setNewTitle("");
     };
     return (
-        // <Form.Item
-        //     label="Tag"
-        //     name={"tag"}
-        //     value={tags}
-        //     // rules={[
-        //     //     {
-        //     //         required: true,
-        //     //         message: "Please pick a tag!"
-        //     //     }
-        //     // ]}
-        // >
-        <Select
-            mode="multiple"
-            dropdownRender={menu => (
-                <div>
-                    {menu}
-                    <Divider style={{ margin: "4px 0" }} />
-                    <div
-                        style={{
-                            display: "flex",
-                            flexWrap: "nowrap",
-                            padding: 8
-                        }}
-                    >
-                        <Input
-                            style={{ flex: "auto" }}
-                            value={newTitle}
-                            onChange={e => setNewTitle(e.target.value)}
-                        />
-                        <a
-                            style={{
-                                flex: "none",
-                                padding: "8px",
-                                display: "block",
-                                cursor: "pointer"
-                            }}
-                            onClick={addNewTagName}
-                        >
-                            <PlusOutlined /> Add item
-                        </a>
-                    </div>
-                </div>
-            )}
+        <Form.Item
+            label="Tag"
+            name={"tag_id"}
+            value={tags}
+            rules={[
+                {
+                    required: true,
+                    message: "Please pick a tag!"
+                }
+            ]}
         >
-            {!!tags?.length
-                ? tags.map(item => {
-                      return (
-                          <Option key={item.name} value={item.name}>
-                              {item.name}
-                          </Option>
-                      );
-                  })
-                : null}
-        </Select>
-        // </Form.Item>
+            <Select
+                mode="multiple"
+                dropdownRender={menu => (
+                    <div>
+                        {menu}
+                        <Divider style={{ margin: "4px 0" }} />
+                        <div
+                            style={{
+                                display: "flex",
+                                flexWrap: "nowrap",
+                                padding: 8
+                            }}
+                        >
+                            <Input
+                                style={{ flex: "auto" }}
+                                value={newTitle}
+                                onChange={e => setNewTitle(e.target.value)}
+                            />
+                            <a
+                                style={{
+                                    flex: "none",
+                                    padding: "8px",
+                                    display: "block",
+                                    cursor: "pointer"
+                                }}
+                                onClick={addNewTagName}
+                            >
+                                <PlusOutlined /> Add item
+                            </a>
+                        </div>
+                    </div>
+                )}
+            >
+                {!!tags?.length
+                    ? tags.map(item => {
+                          return (
+                              <Option key={item.id} value={item.id}>
+                                  {item.name}
+                              </Option>
+                          );
+                      })
+                    : null}
+            </Select>
+        </Form.Item>
     );
 };
 

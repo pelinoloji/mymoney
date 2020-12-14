@@ -15,31 +15,31 @@ const CurrencyElement = ({ currencies, loadData }) => {
             }
         })
             .then(response => {
-                console.log(response, "response currency one");
-                // setNewTitle("");
+                console.log(response, "response currency list");
+                setNewTitle("");
                 loadData();
             })
             .catch(error => {
-                console.log(error, "tag hasnt added on DB");
+                console.log(error, "tag is not added on DB");
             });
     };
 
-    const addNewCurrencyName = () => {
-        newTitle.includes(...currencies) ? console.log("asd") : addCurrency();
-        setNewTitle("");
-    };
-
-    const error = () => {
+    const errorAlert = () => {
         Modal.error({
             title: "This is an error message",
-            content: "some messages...some messages..."
+            content: "bla bla"
         });
+    };
+
+    const addNewCurrencyName = () => {
+        newTitle.includes(...currencies) ? errorAlert : addCurrency();
+        setNewTitle("");
     };
 
     return (
         <Form.Item
             label="Currency"
-            name="currency"
+            name="currency_id"
             value={currencies}
             rules={[
                 {
@@ -83,7 +83,7 @@ const CurrencyElement = ({ currencies, loadData }) => {
                 {!!currencies?.length
                     ? currencies.map(item => {
                           return (
-                              <Option key={item.id} value={item.name}>
+                              <Option key={item.id} value={item.id}>
                                   {item.name}
                               </Option>
                           );
