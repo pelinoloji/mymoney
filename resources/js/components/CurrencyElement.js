@@ -27,12 +27,14 @@ const CurrencyElement = ({ currencies, loadData }) => {
     const errorAlert = () => {
         Modal.error({
             title: "This is an error message",
-            content: "bla bla"
+            content: "You have already added that currency"
         });
     };
 
     const addNewCurrencyName = () => {
-        newTitle.includes(...currencies) ? errorAlert : addCurrency();
+        const currencyArr = Object.values(currencies);
+        const currency = currencyArr.map(item => item.name);
+        currency.includes(newTitle) ? errorAlert() : addCurrency();
         setNewTitle("");
     };
 

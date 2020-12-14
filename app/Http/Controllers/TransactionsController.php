@@ -46,11 +46,12 @@ class TransactionsController extends Controller
   {
     $this->validateTransactions();
     $transaction = new Transaction();
-    $transaction->amount = $request->get('amount');
-    $transaction->date = $request->get('transaction_date');
-    $transaction->expense = $request->get('expense');
     $transaction->currency_id = $request->get('currency_id');
+    $transaction->amount = $request->get('amount');
+    $transaction->expense = $request->get('expense');
     $transaction->recurrence = $request->get('recurrence');
+    $transaction->date = $request->get('transaction_date');
+
     $transaction->save();
 
     $transaction->tag()->attach(request('tags'));
@@ -64,11 +65,12 @@ class TransactionsController extends Controller
   public function update($id, Request $request)
   {
     $transaction = Transaction::find($id);
-    $transaction->amount = $request->get('amount');
-    $transaction->date = $request->get('transaction_date');
-    $transaction->expense = $request->get('expense');
     $transaction->currency_id = $request->get('currency_id');
+    $transaction->amount = $request->get('amount');
+    $transaction->expense = $request->get('expense');
     $transaction->recurrence = $request->get('recurrence');
+    $transaction->date = $request->get('transaction_date');
+
     $transaction->save();
 
     return response()->json('Successfully Updated', $transaction);

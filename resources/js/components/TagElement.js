@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Select, Input, Divider, Form } from "antd";
+import { Select, Input, Divider, Form, Modal } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const TagElement = ({ tags, loadData }) => {
@@ -24,10 +24,20 @@ const TagElement = ({ tags, loadData }) => {
             });
     };
 
+    const errorAlert = () => {
+        Modal.error({
+            title: "This is an error message",
+            content: "You have already added that tag"
+        });
+    };
+
     const addNewTagName = () => {
-        newTitle.includes(...tags) ? alert("tag list") : addTag();
+        const tagsArr = Object.values(tags);
+        const tag = tagsArr.map(item => item.name);
+        tag.includes(newTitle) ? errorAlert() : addTag();
         setNewTitle("");
     };
+
     return (
         <Form.Item
             label="Tag"

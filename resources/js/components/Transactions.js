@@ -57,13 +57,12 @@ const Transactions = ({ expense }) => {
         const addTransaction = data => {
             const payload = {
                 amount: expense ? data.amount * -1 : data.amount,
-                tag_id: data.tag_id,
+                tag_id: Number(data.tag_id),
                 expense: expense,
                 currency_id: data.currency_id,
                 recurrence: data.recurrence,
                 transaction_date: data.transaction_date.format("YYYY-MM-DD")
             };
-            // console.log(payload, "payload");
 
             axios({
                 method: "post",
@@ -113,7 +112,7 @@ const Transactions = ({ expense }) => {
             },
             {
                 title: "Currency",
-                dataIndex: "currencies"
+                dataIndex: "currencies.name"
             },
             {
                 title: "Tag",
